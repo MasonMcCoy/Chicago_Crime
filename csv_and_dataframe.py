@@ -22,12 +22,7 @@ def getCrimeData(year, yearCount):
     request = requests.get(f'https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit={API_Limit}&year={year}').json()
     df = pandas.DataFrame.from_records(request)
     print(f'\n{year} Pre-Filter Count: {len(df)}')
-<<<<<<< Updated upstream
-    df = df.set_index('id')
-    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'year', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
-=======
-    df = df.drop(['date', 'case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
->>>>>>> Stashed changes
+    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
     df = df.dropna()
     df = df[(df.longitude>='-87.6226')&(df.longitude<='-87.6260')&(df.latitude>='41.88843809')&(df.latitude<='41.90051916')]
     dataframes[year] = df
