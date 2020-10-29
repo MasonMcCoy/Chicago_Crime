@@ -1,0 +1,4 @@
+id,date,block,iucr,primary_type,description,location_description,latitude,longitude,location
+11311580,2018-05-10T20:21:00.000,004XX N MICHIGAN AVE,1120,DECEPTIVE PRACTICE,FORGERY,COMMERCIAL / BUSINESS OFFICE,41.889906681,-87.624100509,"{'latitude': '41.889906681', 'longitude': '-87.624100509', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}"
+11228340,2018-02-11T17:29:00.000,009XX N MICHIGAN AVE,0860,THEFT,RETAIL THEFT,DEPARTMENT STORE,41.899410159,-87.624131266,"{'latitude': '41.899410159', 'longitude': '-87.624131266', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}"
+11196327,2018-01-01T20:30:00.000,001XX E WALTON ST,0281,CRIM SEXUAL ASSAULT,NON-AGGRAVATED,HOTEL/MOTEL,41.900017769,-87.623426629,"{'latitude': '41.900017769', 'longitude': '-87.623426629', 'human_address': '{""address"": """", ""city"": """", ""state"": """", ""zip"": """"}'}"
