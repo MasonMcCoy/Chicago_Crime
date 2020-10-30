@@ -13,7 +13,7 @@ import scipy.stats as st
 # Years to be input into the API request
 years = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 yearCount = 0
-API_Limit = 50000
+API_Limit = 500000
 
 # Dictionary to store DataFrames for each given year
 dataframes = dict.fromkeys(years)
@@ -347,3 +347,62 @@ crimes = crime_gdp_df["crime counts"]
 gdp = crime_gdp_df["GDP"]
 correlation = st.pearsonr(crimes,gdp)
 print(f"The correlation between crime and GDP is {round(correlation[0],2)}")
+
+theft_norms = []
+assault_norms = []
+battery_norms = []
+crime_count= []
+theft_count = []
+assault_count = []
+battery_count = []
+
+for norm in normsDF:
+    crime_count.append(sum(valuesDF[norm]))
+    theft_count.append(valuesDF[norm][0])
+    assault_count.append(valuesDF[norm][5])
+    battery_count.append(valuesDF[norm][3])       
+    theft_norms.append(normsDF[norm][0])
+    assault_norms.append(normsDF[norm][5])
+    battery_norms.append(normsDF[norm][3])
+
+plt.plot(years, crime_count)
+plt.title('Annually Reported Crime on the "Mag Mile"')
+plt.xlabel('Year')
+plt.ylabel('Crime Count')
+plt.show()
+
+plt.plot(years, theft_count)
+plt.title('Annually Reported Theft on the "Mag Mile"')
+plt.xlabel('Year')
+plt.ylabel('Crime Count')
+plt.show()
+
+plt.plot(years, assault_count)
+plt.title('Annually Reported Assault on the "Mag Mile"')
+plt.xlabel('Year')
+plt.ylabel('Crime Count')
+plt.show()
+
+plt.plot(years, battery_count)
+plt.title('Annually Reported Battery on the "Mag Mile"')
+plt.xlabel('Year')
+plt.ylabel('Crime Count')
+plt.show()
+
+plt.plot(years, theft_norms)
+plt.title('Theft as Percentage of Annual Crime, "Mag Mile", 2010-2019')
+plt.xlabel('Year')
+plt.ylabel('Percentage of Crime')
+plt.show()
+
+plt.plot(years, assault_norms)
+plt.title('Assault as Percentage of Annual Crime, "Mag Mile", 2010-2019')
+plt.xlabel('Year')
+plt.ylabel('Percentage of Crime')
+plt.show()
+
+plt.plot(years, battery_norms)
+plt.title('Battery as Percentage of Annual Crime, "Mag Mile", 2010-2019')
+plt.xlabel('Year')
+plt.ylabel('Percentage of Crime')
+plt.show()
