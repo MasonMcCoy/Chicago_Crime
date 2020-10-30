@@ -104,16 +104,16 @@ def getCrimeData(year, yearCount):
     plt.bar(offenses, top_10_df["count"], color='b', align="center")
     plt.xticks(rotation=60,horizontalalignment='right')
     plt.figure(figsize=[10,4.8])
-    #plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png")
+    plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png")
     # End of TOm's stuff (Oct28)
-'''
+
     df.to_csv('.\output\\' + str(year) + 'CrimeData.csv', index = False) 
     # Start and append to "All" records csv
     if yearCount == 0:
         df.to_csv('.\output\All_CrimeData.csv', index = False) 
     else:
         df.to_csv('.\output\All_CrimeData.csv', mode='a', header=False, index = False) 
-'''
+
 # For loop that iterates through given years; creatings csv file, DataFrame
 for year in years:
     getCrimeData(year, yearCount)
