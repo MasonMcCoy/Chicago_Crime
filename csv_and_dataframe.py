@@ -4,16 +4,20 @@ Created on Thu Oct 22 16:31:29 2020
 
 @author: Mason
 """
-
 import requests
 import pandas
+import matplotlib.pyplot as plt
+# import numpy as np
 
 # Years to be input into the API request
-years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+years = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
+yearCount = 0
+API_Limit = 500000
 
-# Dictionary to store DatFrames for each given year
+# Dictionary to store DataFrames for each given year
 dataframes = dict.fromkeys(years)
 
+# Lists to store value_counts data
 theft_values = []
 theft_norms = []
 decpra_values = []
@@ -48,25 +52,75 @@ mvtheft_values = []
 mvtheft_norms = []
 other_values = []
 other_norms = []
+arson_values = []
+arson_norms = []
+so_values = []
+so_norms = []
+intim_values = []
+intim_norms = []
+wv_values = []
+wv_norms = []
+oic_values = []
+oic_norms = []
+pi_values = []
+pi_norms = []
+stalk_values = []
+stalk_norms = []
+kidn_values = []
+kidn_norms= []
+cclv_values = []
+cclv_norms = []
+obs_values = []
+obs_norms = []
+csa_values = []
+csa_norms= []
+nocrim_values = []
+nocrim_norms = []
+nocrim_values = []
 
 # API request for given year (1,000,000 records) into cleaned DataFrame
-def getCrimeData(year):
-    request = requests.get('https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit=100000&year=' + str(year)).json()
+def getCrimeData(year, yearCount):
+    request = requests.get(f'https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit={API_Limit}&year={year}').json()
     df = pandas.DataFrame.from_records(request)
-    df = df.set_index('id')
-    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'year', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
+    print(f'\n{year} Pre-Filter Count: {len(df)}')
+    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
     df = df.dropna()
-    df = df[df.longitude >= '-87.6226'] 
-    df = df[df.longitude <= '-87.6260']
-    df = df[df.latitude >= '41.88843809']
-    df = df[df.latitude <= '41.90051916']          
-    df.to_csv(r'C:\Users\Mason\Desktop\Crime Test\ ' + str(year) + 'CrimeData.csv') #Use local file path
+    df = df[(df.longitude>='-87.6226')&(df.longitude<='-87.6260')&(df.latitude>='41.88843809')&(df.latitude<='41.90051916')]
     dataframes[year] = df
+    print(f'    Post-Filter Count: {len(df)}')     
 
+    # CC added Tom's bar charts (Oct28)
+    top_10_list = df.groupby(["iucr","primary_type","description"]).count()
+    top_10_df = pandas.DataFrame(top_10_list)
+    top_10_df.rename(columns = {'id':'count'}, inplace = True) 
+    top_10_df.reset_index(drop=False,inplace=True)
+    top_10_df.sort_values(by=['count'], ascending = False, inplace = True)
+    top_10_df = top_10_df.head(10)
+    top_10_df.sort_values(by=["iucr"], ascending = True, inplace = True)
+    offenses=top_10_df["primary_type"]+" / "+top_10_df["description"]
+    plt.title("Top 10 Offenses for " + str(year))
+    plt.xlabel("Criminal Offense")
+    plt.ylabel("Criminal Offense Count")
+    plt.bar(offenses, top_10_df["count"], color='b', align="center")
+    plt.xticks(rotation=60,horizontalalignment='right')
+    plt.figure(figsize=[10,4.8])
+    #plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png")
+    # End of TOm's stuff (Oct28)
+'''
+    df.to_csv('.\output\\' + str(year) + 'CrimeData.csv', index = False) 
+    # Start and append to "All" records csv
+    if yearCount == 0:
+        df.to_csv('.\output\All_CrimeData.csv', index = False) 
+    else:
+        df.to_csv('.\output\All_CrimeData.csv', mode='a', header=False, index = False) 
+'''
 # For loop that iterates through given years; creatings csv file, DataFrame
 for year in years:
-    getCrimeData(year)
-    
+    getCrimeData(year, yearCount)
+    yearCount +=1
+print(f'\nNumber of years processed: {yearCount}')
+
+# Isolates value_counts data(count and normalized) into respepctive lists    
 for dataframe in dataframes:
     val = dataframes[dataframe]['primary_type'].value_counts()
     norm = dataframes[dataframe]['primary_type'].value_counts(normalize = True)
@@ -174,15 +228,103 @@ for dataframe in dataframes:
     except Exception:
         other_values.append(0)
         other_norms.append(0)
+    try:
+        arson_values.append(val['ARSON'])
+        arson_norms.append(norm['ARSON'])
+    except Exception:
+        arson_values.append(0)
+        arson_norms.append(0)       
+    try:
+        so_values.append(val['SEX OFFENSE'])
+        so_norms.append(norm['SEX OFFENSE'])
+    except Exception:
+        so_values.append(0)
+        so_norms.append(0)
+    try:
+        intim_values.append(val['INTIMIDATION'])
+        intim_norms.append(norm['INTIMIDATION'])
+    except Exception:
+        intim_values.append(0)
+        intim_norms.append(0)
+    try:
+        wv_values.append(val['WEAPONS VIOLATION'])
+        wv_norms.append(norm['WEAPONS VIOLATION'])
+    except Exception:
+        wv_values.append(0)
+        wv_norms.append(0)
+    try:
+        oic_values.append(val['OFFENSE INVOLVING CHILDREN'])
+        oic_norms.append(norm['OFFENSE INVOLVING CHILDREN'])
+    except Exception:
+        oic_values.append(0)
+        oic_norms.append(0)
+    try:
+        pi_values.append(val['PUBLIC INDECENY'])
+        pi_norms.append(norm['PUBLIC INDECENY'])
+    except Exception:
+        pi_values.append(0)
+        pi_norms.append(0)
+    try:
+        stalk_values.append(val['STALKING'])
+        stalk_norms.append(norm['STALKING'])
+    except Exception:
+        stalk_values.append(0)
+        stalk_norms.append(0)    
+    try:
+        kidn_values.append(val['KIDNAPPING'])
+        kidn_norms.append(norm['KIDNAPPING'])
+    except Exception:
+        kidn_values.append(0)
+        kidn_norms.append(0)  
+    try:
+        cclv_values.append(val['CONCEALED CARRY LICENSE VIOLATION'])
+        cclv_norms.append(norm['CONCEALED CARRY LICENSE VIOLATION'])
+    except Exception:
+        cclv_values.append(0)
+        cclv_norms.append(0)  
+    try:
+        obs_values.append(val['OBSCENITY'])
+        obs_norms.append(norm['OBSCENITY'])
+    except Exception:
+        obs_values.append(0)
+        obs_norms.append(0)  
+    try:
+        csa_values.append(val['CRIM SEXUAL ASSAULT'])
+        csa_norms.append(norm['CRIM SEXUAL ASSAULT'])
+    except Exception:
+        csa_values.append(0)
+        csa_norms.append(0)
+    try:
+        nocrim_values.append(val['NON-ASSAULT'])
+        nocrim_norms.append(norm['NON-ASSAULT'])
+    except Exception:
+        nocrim_values.append(0)
+        nocrim_norms.append(0)
 
-crimes = 'THEFT', 'DECEPTIVE PRACTICE', 'CRIMINAL TRESPASS', 'BATTERY', 'CRIMINAL DAMAGE', 'ASSAULT', 'PROSTITUION', 'NARCOTICS', 'ROBBERY', 'PUBLIC PEACE VIOLATION', 'BURGLARY', 'LIQUOR LAW VIOLATION', 'INTERFERENCE WITH PUBLIC OFFICER', 'HOMICIDE', 'CRIMINAL SEXUAL ASSAULT', 'MOTOR VEHICLE THEFT', 'OTHER OFFENSE'        
-data = (theft_values, decpra_values, tres_values, batt_values, dam_values, assault_values, prost_values, narc_values, robb_values, ppv_values, burg_values, llv_values, iwpo_values, homi_values, sa_values, mvtheft_values, other_values)
+# Column titles for DataFrame (matches primary_type)        
+crimes = 'THEFT', 'DECEPTIVE PRACTICE', 'CRIMINAL TRESPASS', 'BATTERY', 'CRIMINAL DAMAGE', 'ASSAULT', 'PROSTITUION', 'NARCOTICS', 'ROBBERY', 'PUBLIC PEACE VIOLATION', 'BURGLARY', 'LIQUOR LAW VIOLATION', 'INTERFERENCE WITH PUBLIC OFFICER', 'HOMICIDE', 'CRIMINAL SEXUAL ASSAULT', 'MOTOR VEHICLE THEFT', 'ARSON', 'SEX OFFENSE', 'INTIMITDATION', 'WEAPONS VIOLATION', 'OFFENSE INVOLVING CHILDREN', 'PUBLIC INDECENCY', 'STALKING', 'KIDNAPPING', 'CONCEALED CARRY LICENSE VIOLATION', 'OBSCENITY', 'CRIM SEXUAL ASSAULT', 'NON-CRIMINAL', 'OTHER OFFENSE'
 
-valuesDF = pandas.DataFrame(data, columns = years)
+# Value_count() integer data     
+values_data = (theft_values, decpra_values, tres_values, batt_values, dam_values, assault_values, prost_values, narc_values, 
+               robb_values, ppv_values, burg_values, llv_values, iwpo_values, homi_values, sa_values, mvtheft_values, 
+               arson_values, so_values, intim_values, wv_values, oic_values, pi_values, stalk_values, kidn_values, cclv_values, 
+               obs_values, csa_values, nocrim_values, other_values)
+
+# Value_count() normalized (percentage) data   
+norms_data = (theft_norms, decpra_norms, tres_norms, batt_norms, dam_norms, assault_norms, prost_norms, narc_norms, robb_norms, 
+              ppv_norms, burg_norms, llv_norms, iwpo_norms, homi_norms, sa_norms, mvtheft_norms, arson_norms, so_norms, 
+              intim_norms, wv_norms, oic_norms, pi_norms, stalk_norms, kidn_norms, cclv_norms, obs_norms, csa_norms, 
+              nocrim_norms, other_norms)
+
+# Integer DataFrame
+valuesDF = pandas.DataFrame(values_data, columns = years)
 valuesDF['Crime'] = crimes
-valuesDF = valuesDF.set_index('Crime'
-                              )
-#normsDF = pandas.DataFrame(theft_norms, decpra_norms, tres_norms, batt_norms, dam_norms) #, assault_norms, prost_norms, narc_norms, robb_norms, ppv_norms, burg_norms, llv_norms, iwpo_norms, homi_norms, sa_norms, mvtheft_norms, other_norms)
+valuesDF = valuesDF.set_index('Crime')
+
+# Normalized DataFrame
+normsDF = pandas.DataFrame(norms_data, columns = years)
+normsDF['Crime'] = crimes
+normsDF = normsDF.set_index('Crime')
 
 print(valuesDF)
-#print(normsDF)
+print(normsDF)
