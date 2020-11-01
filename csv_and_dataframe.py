@@ -326,18 +326,18 @@ print(normsDF)
 
 #Tom's code 
 gdp_data_df = pandas.read_csv('./SourceData/GDP_year.csv')
-crime_df = pandas.read_csv('./output/All_CrimeData.csv')
+crime_df = pandas.read_csv('./output2/All_CrimeData.csv')
 
 crime_counts=crime_df.groupby(["year"]).count()["id"]
-crime_gdp_df=pandas.DataFrame({'year':crime_counts.index, "crime counts":crime_counts.values, "GDP":gdp_data_df["GDP"]})
+crime_gdp_df=pandas.DataFrame({'year':crime_counts.index, "id":crime_counts.values, "GDP":gdp_data_df["GDP"]})
 #crime_gdp_df=crime_gdp_df.drop(19)
-plt.scatter(crime_gdp_df["crime counts"],crime_gdp_df["GDP"])
+plt.scatter(crime_gdp_df["id"],crime_gdp_df["GDP"])
 plt.title("Correlation Between Crime Count and GDP")
 plt.xlabel('Crime Count per Year')
 plt.ylabel('Measure of Yearly GDP')
 plt.show()
 
-crimes = crime_gdp_df["crime counts"]
+crimes = crime_gdp_df["id"]
 gdp = crime_gdp_df["GDP"]
 correlation = st.pearsonr(crimes,gdp)
 print(f"The correlation between crime and GDP is {round(correlation[0],2)}")
