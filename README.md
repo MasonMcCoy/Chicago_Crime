@@ -4,8 +4,8 @@
 
   Presentation: https://github.com/MasonMcCoy/Chicago_Crime/blob/main/NU-Project1_ChicagoMagMile_Crime.pptx
 
-  Jupyter Notebook: https://github.com/MasonMcCoy/Chicago_Crime/blob/main/Crime_API.ipynb
-
+  Jupyter Notebook: https://github.com/MasonMcCoy/Chicago_Crime/blob/main/Crime_API_Jupyter.ipynb
+  
   Spyder script(py): https://github.com/MasonMcCoy/Chicago_Crime/blob/main/Crime_API_Spyder.py
 
   ## Project Team
