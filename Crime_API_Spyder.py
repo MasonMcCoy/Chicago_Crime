@@ -1,17 +1,14 @@
 import requests
 import pandas
 import matplotlib.pyplot as plt
-# import numpy as np
 import scipy.stats as st
-
+import seaborn as sns 
 # Years to be input into the API request
 years = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019]
 yearCount = 0
 API_Limit = 500000
-
 # Dictionary to store DataFrames for each given year
 dataframes = dict.fromkeys(years)
-
 # Lists to store value_counts data
 theft_values = []
 theft_norms = []
@@ -72,7 +69,6 @@ csa_norms= []
 nocrim_values = []
 nocrim_norms = []
 nocrim_values = []
-
 # API request for given year (1,000,000 records) into cleaned DataFrame
 def getCrimeData(year, yearCount):
     request = requests.get(f'https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit={API_Limit}&year={year}').json()
@@ -85,7 +81,7 @@ def getCrimeData(year, yearCount):
     dataframes[year] = df
     print(f'    Post-Filter Count: {len(df)}')     
 
-    # CC added Tom's bar charts (Oct28)
+    # Bar chat Summary by each dimension/attribute
     top_10_list = df.groupby(["iucr","primary_type","description"]).count()
     top_10_df = pandas.DataFrame(top_10_list)
     top_10_df.rename(columns = {'id':'count'}, inplace = True) 
@@ -101,8 +97,8 @@ def getCrimeData(year, yearCount):
     plt.xticks(rotation=60,horizontalalignment='right')
     plt.figure(figsize=[10,4.8])
     plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png")
-    # End of TOm's stuff (Oct28)
 
+    # Write year's date to csv
     df.to_csv('.\output\\' + str(year) + 'CrimeData.csv', index = False) 
     # Start and append to "All" records csv
     if yearCount == 0:
@@ -325,13 +321,13 @@ normsDF = normsDF.set_index('Crime')
 print(valuesDF)
 print(normsDF)
 
-#Tom's code 
+# Scatter Correlation to GDP
 gdp_data_df = pandas.read_csv('./SourceData/GDP_year.csv')
 crime_df = pandas.read_csv('./output/All_CrimeData.csv')
 
 crime_counts=crime_df.groupby(["year"]).count()["id"]
 crime_gdp_df=pandas.DataFrame({'year':crime_counts.index, "id":crime_counts.values, "GDP":gdp_data_df["GDP"]})
-#crime_gdp_df=crime_gdp_df.drop(19)
+# crime_gdp_df=crime_gdp_df.drop(19)
 plt.scatter(crime_gdp_df["id"],crime_gdp_df["GDP"])
 plt.title("Correlation Between Crime Count and GDP")
 plt.xlabel('Crime Count per Year')
@@ -401,3 +397,83 @@ plt.title('Battery as Percentage of Annual Crime, "Mag Mile", 2010-2019')
 plt.xlabel('Year')
 plt.ylabel('Percentage of Crime')
 plt.show()
+
+# Bar charts and Pie chart
+# read csv file in to use for the graphs
+dataf = pandas.read_csv('.\output\All_CrimeData.csv')
+dataf = dataf[['id','date','block','iucr','primary_type','description','location_description','year','latitude','longitude','location']].sample(frac=1).head(18882).reset_index(drop=True)
+dataf
+# Drop columns id, block, iucr
+dataf = dataf.dropna()
+dataf = dataf.drop(columns=['block', 'iucr'], axis = 1)
+# top 10 crime locations
+pandas.value_counts(dataf['location_description'])[:10]
+# top 10 by primary_type
+pandas.value_counts(dataf['primary_type'])[:10]
+# Bar plot - crime by location
+plt.figure(figsize = (15, 10))
+sns.countplot(y= 'location_description', data = dataf, order = dataf['location_description'].value_counts().iloc[:10].index)
+plt.title('Crime by Location Description - Mag mile 2010-2019', fontsize=16)
+plt.savefig(".\output\\" + "Crime_Location.png")
+# Crime type by primary type = Theft
+df_theft = dataf[dataf['primary_type'] == 'THEFT']
+# Bar plot primary type = Theft
+plt.figure(figsize = (15, 7))
+sns.countplot(y = df_theft['description'])
+plt.title('Crime by Primary Type - Mag mile 2010-2019', fontsize=16)
+plt.savefig(".\output\\" + "Crime_Primary_Type_Theft.png")
+# Generate a pie plot using pandas
+crime_df = pandas.DataFrame(dataf.groupby(["primary_type"]).count()).reset_index()[:5]
+crime_df.head()
+# Alter the dataframe down to two columns
+crime_df = crime_df[["primary_type","description"]]
+crime_df.head()
+# pie plot using pandas
+plt.figure(figsize=(20,15))
+ax1 = plt.subplot(121, aspect="equal")
+crime_df.plot(kind="pie", y = "description", ax=ax1, autopct='%1.1f%%',startangle=90, shadow=True, 
+              labels=crime_df["primary_type"], legend = False, fontsize=12)
+
+plt.title("Primary Crime % Meg-Mile 2010-2019", fontsize=20)
+plt.xlabel("")
+plt.ylabel("")
+#plt.legend()
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),fancybox=True, shadow=True, ncol=5)
+plt.savefig(".\output\\" + "Pie_Crime_Type.png")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
