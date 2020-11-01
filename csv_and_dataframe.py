@@ -78,7 +78,8 @@ def getCrimeData(year, yearCount):
     request = requests.get(f'https://data.cityofchicago.org/resource/ijzp-q8t2.json?$limit={API_Limit}&year={year}').json()
     df = pandas.DataFrame.from_records(request)
     print(f'\n{year} Pre-Filter Count: {len(df)}')
-    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
+    df = df.drop(['case_number', 'domestic', 'beat', 'district', 'ward', 'fbi_code', 'year', 'updated_on', 'x_coordinate', 'y_coordinate', 'community_area', 'arrest'], axis = 1)
+    df['year'] = year
     df = df.dropna()
     df = df[(df.longitude>='-87.6226')&(df.longitude<='-87.6260')&(df.latitude>='41.88843809')&(df.latitude<='41.90051916')]
     dataframes[year] = df
@@ -326,7 +327,7 @@ print(normsDF)
 
 #Tom's code 
 gdp_data_df = pandas.read_csv('./SourceData/GDP_year.csv')
-crime_df = pandas.read_csv('./output2/All_CrimeData.csv')
+crime_df = pandas.read_csv('./output/All_CrimeData.csv')
 
 crime_counts=crime_df.groupby(["year"]).count()["id"]
 crime_gdp_df=pandas.DataFrame({'year':crime_counts.index, "id":crime_counts.values, "GDP":gdp_data_df["GDP"]})
