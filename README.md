@@ -1,6 +1,6 @@
 # Chicago_Crime - Project 1
 
-  ## Chicago Mag Mile Crime 2010:2020 (2009-2019)
+  ## Chicago Mag Mile Crime 2010:2020 (2010-2019)
 
   Presentation: https://github.com/MasonMcCoy/Chicago_Crime/blob/main/NU-Project1_ChicagoMagMile_Crime.pptx
 
