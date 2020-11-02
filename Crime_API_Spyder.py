@@ -1,3 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+NU07/08 - Project 1
+Data Science & Visualization
+Topic: Chicago Mag Mile Crime 2010:2020
+
+Project Team: 
+  Carl Coffman
+  Gisela Gutierrez
+  Tom Henry
+  Mason McCoy
+"""
 import requests
 import pandas
 import matplotlib.pyplot as plt
@@ -95,9 +107,9 @@ def getCrimeData(year, yearCount):
     plt.ylabel("Criminal Offense Count")
     plt.bar(offenses, top_10_df["count"], color='b', align="center")
     plt.xticks(rotation=60,horizontalalignment='right')
-    plt.figure(figsize=[10,4.8])
-    plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png")
-
+    plt.savefig(".\output\\" + str(year) + "Top10_Offenses.png", bbox_inches='tight')
+    plt.show()
+    
     # Write year's date to csv
     df.to_csv('.\output\\' + str(year) + 'CrimeData.csv', index = False) 
     # Start and append to "All" records csv
@@ -429,7 +441,7 @@ crime_df.head()
 crime_df = crime_df[["primary_type","description"]]
 crime_df.head()
 # pie plot using pandas
-plt.figure(figsize=(20,15))
+plt.figure(figsize=(12,15))
 ax1 = plt.subplot(121, aspect="equal")
 crime_df.plot(kind="pie", y = "description", ax=ax1, autopct='%1.1f%%',startangle=90, shadow=True, 
               labels=crime_df["primary_type"], legend = False, fontsize=12)
@@ -440,40 +452,3 @@ plt.ylabel("")
 #plt.legend()
 plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),fancybox=True, shadow=True, ncol=5)
 plt.savefig(".\output\\" + "Pie_Crime_Type.png")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
