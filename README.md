@@ -1,4 +1,5 @@
 # Chicago_Crime - Project 1
+This project involved utilizing crime statistics via API requests from the the city of Chicago's Data Portal. This data was cleaned and formated into tabular and graphical visualizations to illumintate recent trends in crime taking place in the vicinity of the Magnificent Mile. The period of time our project team looked at was from 2010-2019.
 
   ## Chicago Mag Mile Crime 2010-2019
 
